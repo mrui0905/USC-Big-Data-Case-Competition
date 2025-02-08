@@ -1036,37 +1036,3 @@ def get_binary_accuracy(
     return (
         predict_positives == true_positives
     ).to(torch.float32).mean(dim=-1)
-
-def get_binary_auprc(
-    config: dict,
-    logits: torch.Tensor,
-    labels: torch.Tensor
-) -> torch.Tensor:
-    """
-    Get the binary accuracy between a label and a logit tensor.
-    It can handle arbitrary ensemble shapes.
-
-    Parameters
-    ----------
-    logits : torch.Tensor
-        The logit tensor. We assume it has shape
-        `ensemble_shape + (dataset_size, 1)`.
-    labels : torch.Tensor
-        The tensor of true labels. We assume it has shape
-        `(dataset_size,)` or `ensemble_shape + (dataset_size,)`.
-
-    Returns
-    -------
-    The tensor of binary accuracies per ensemble member
-    of shape `ensemble_shape`.
-    """
-    logit_positive = logits[..., 0]
-    prob_positive = torch.sigmoid(logit_positive)
-    true_positives = labels.broadcast_to(
-        prob_positive.shape
-    ).to(torch.bool)
-    if len(logits.shape) == 1:
-        num_tasks = 1
-    else:
-        num_tasks = logits.shape[0]
-    return binary_auprc(prob_positive, true_positives, num_tasks=num_tasks)
