@@ -1,0 +1,1 @@
+2025 University of South Carolina Big Data Health Science Case Competition - 3rd Place
